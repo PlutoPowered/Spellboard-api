@@ -1,0 +1,56 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+}
+
+group 'spellboard.api'
+version '0.0.0'
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://jitpack.io' }
+}
+
+dependencies {
+
+}
+
+task ghpagesJavadocs(type: Javadoc) {
+    destinationDir = file("/docs")
+
+    source = sourceSets.main.allJava
+    classpath = configurations.runtimeClasspath
+}
+
+task fatJar(type: Jar) {
+    from configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    with jar
+
+    exclude("**/module-info.class")
+
+    classifier("fat")
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+
+    classifier("javadoc")
+}
+
+artifacts {
+    archives javadocJar, fatJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = rootProject.name
+
+            from components.java
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

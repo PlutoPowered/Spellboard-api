@@ -1,0 +1,37 @@
+name: Java CI
+
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  builds:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: JDK 17 Install
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: gradle
+
+      - name: Permit Wrapper
+        run: chmod +x gradlew
+
+      - name: Test
+        run: ./gradlew clean test
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Artifacts
+          path: build/libs
+
+      - name: Clean Cache
+        run: |
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock
+          rm -f ~/.gradle/caches/modules-2/gc.properties

@@ -1,0 +1,8 @@
+package spellboard.api.board;
+
+import spellboard.api.Identifiable;
+import spellboard.api.Targetable;
+
+public interface Unit extends Occupier, Targetable, Identifiable {
+
+}
